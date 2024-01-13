@@ -26,8 +26,9 @@ public class AdminController {
     }
 
     @GetMapping("/adminpanel")
-    public List<Person> getAll(){
-        return personService.getAll();
+    public ResponseEntity<List<Person>> getAll(){
+        List<Person> people = personService.getAll();
+        return ResponseEntity.ok(people);
     }
 
     @PostMapping("/reg")

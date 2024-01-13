@@ -8,20 +8,23 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import ru.itmentor.spring.boot_security.demo.services.PersonDetailsService;
+import ru.itmentor.spring.boot_security.demo.services.PersonService;
+
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    private final PersonDetailsService personDetailsService;
+    private final PersonService personService;
     private final SuccessUserHandler successUserHandler;
+
     @Autowired
-    public WebSecurityConfig(PersonDetailsService personDetailsService, SuccessUserHandler successUserHandler) {
-        this.personDetailsService = personDetailsService;
+    public WebSecurityConfig(PersonService personService, SuccessUserHandler successUserHandler) {
+        this.personService = personService;
         this.successUserHandler = successUserHandler;
     }
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(personDetailsService);
+        auth.userDetailsService(personService);
     }
 
     @Override
@@ -29,7 +32,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/admin/**").hasRole("ADMIN")
-                        .antMatchers("/auth/login", "/error").permitAll()
+                .antMatchers("/auth/login", "/error").permitAll()
                 .anyRequest().hasAnyRole("USER", "ADMIN")
                 .and()
                 .formLogin().loginPage("/auth/login")
@@ -42,8 +45,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .httpBasic();
     }
+
     @Bean
-    public PasswordEncoder getPasswordEncoder(){
+    public PasswordEncoder getPasswordEncoder() {
         return NoOpPasswordEncoder.getInstance();
     }
 }

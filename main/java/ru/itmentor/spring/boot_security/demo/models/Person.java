@@ -14,7 +14,7 @@ public class Person {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @NotEmpty(message = "Имя не должно быть пустым")
     @Size(min=2, max=50, message = "Псевдоним не должен быть корче 2 или длиннее 50 символов")
@@ -31,7 +31,7 @@ public class Person {
     @Column(name = "password")
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(name = "person_roles",
             joinColumns = @JoinColumn(name = "person_id"),
             inverseJoinColumns = @JoinColumn(name = "roles_id"))
