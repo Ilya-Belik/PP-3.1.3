@@ -2,19 +2,19 @@ package ru.itmentor.spring.boot_security.demo.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cascade;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.Set;
 
-@JsonIgnoreProperties({"roles"})
 @Entity
 @Table(name="person")
 public class Person {
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
 
     @NotEmpty(message = "Имя не должно быть пустым")
@@ -28,22 +28,23 @@ public class Person {
     private String name;
 
     @NotEmpty(message = "Поле пароль обязательно к заполнению")
-    @Size(min=5, max=50, message = "Пароль должен быть не короче 5 или длиннее 50 символов, состоять должен из латинских символов разного регистра")
+    @Size(min=5, max=100, message = "Пароль должен быть не короче 5 или длиннее 50 символов, состоять должен из латинских символов разного регистра")
     @Column(name = "password")
     private String password;
 
-    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL)
-    private Set<Role> roles;
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
 
     public Person() {
     }
 
-    public Set<Role> getRoles() {
-        return roles;
+    public Role getRole() {
+        return role;
     }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public Person(String username, String name) {
