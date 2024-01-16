@@ -9,17 +9,14 @@ import ru.itmentor.spring.boot_security.demo.util.PersonNotFoundException;
 import java.util.List;
 @RestController
 @RequestMapping("/user")
-public class MainController {
+public class UserController {
 
     private final PersonService personService;
 
-    public MainController(PersonService personService) {
+    public UserController(PersonService personService) {
         this.personService = personService;
     }
-    @GetMapping("")
-    public List<Person> sayHello(){
-        return personService.getAll();
-    }
+
     @GetMapping("/{id}")
     public Person showById(@PathVariable("id") int id){
         return personService.findById(id);
