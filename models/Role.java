@@ -1,14 +1,12 @@
 package ru.itmentor.spring.boot_security.demo.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name="roles")
+@Table(name = "roles")
 public class Role implements GrantedAuthority {
 
     @Id
@@ -18,19 +16,21 @@ public class Role implements GrantedAuthority {
     @Column(name = "name_role")
     private String name;
 
+    @ManyToMany(mappedBy = "roles")
+    private Set<Person> persons;
+
     public Role() {
     }
 
-    public Role(String name, int id) {
-        this.id = id;
+    public Role(String name) {
         this.name = name;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -49,6 +49,14 @@ public class Role implements GrantedAuthority {
 
     @Override
     public String toString() {
-        return name.toString();
+        return name;
+    }
+
+    public Set<Person> getPersons() {
+        return persons;
+    }
+
+    public void setPersons(Set<Person> persons) {
+        this.persons = persons;
     }
 }
