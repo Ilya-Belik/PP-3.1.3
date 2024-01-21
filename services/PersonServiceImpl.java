@@ -42,19 +42,26 @@ public class PersonServiceImpl implements PersonService {
             throw new UsernameNotFoundException("User not found");
         }
         Person person = personOptional.get();
-        Role role = person.getRole();
-        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role.getName()));
+        Set<Role> roles = person.getRoles();
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        for (Role role : roles) {
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
+        }
         return new User(person.getUsername(), person.getPassword(), authorities);
     }
 
     @Transactional
     @Override
-    public void addNewPerson(Person person, String roleName) {
-        Role role = roleRepository.findByName(roleName);
-        if (role == null) {
-            throw new IllegalArgumentException("Роль не найдена");
+    public void addNewPerson(Person person, List<String> roleNames) {
+        Set<Role> roles = new HashSet<>();
+        for (String roleName : roleNames) {
+            Role role = roleRepository.findByName(roleName);
+            if (role == null) {
+                throw new IllegalArgumentException("Роль не найдена: " + roleName);
+            }
+            roles.add(role);
         }
-        person.setRole(role);
+        person.setRoles(roles);
         personRepository.save(person);
     }
 
@@ -87,9 +94,22 @@ public class PersonServiceImpl implements PersonService {
         personForUpdating.setName(updatedPerson.getName());
         personForUpdating.setUsername(updatedPerson.getUsername());
 
-        PasswordEncoder passwordEncoder = getPasswordEncoder();
-        String encodedPassword = passwordEncoder.encode(updatedPerson.getPassword());
-        personForUpdating.setPassword(encodedPassword);
+        if (updatedPerson.getPassword() != null) {
+            PasswordEncoder passwordEncoder = getPasswordEncoder();
+            String encodedPassword = passwordEncoder.encode(updatedPerson.getPassword());
+            personForUpdating.setPassword(encodedPassword);
+        }
+
+        if (updatedPerson.getRoles() != null) {
+            Set<Role> roles = new HashSet<>();
+            for (Role role : updatedPerson.getRoles()) {
+                Role existingRole = roleRepository.findById(role.getId())
+                        .orElseThrow(() -> new IllegalArgumentException("Роль не найдена: " + role.getId()));
+                roles.add(existingRole);
+            }
+            personForUpdating.getRoles().clear();
+            personForUpdating.getRoles().addAll(roles);
+        }
 
         personRepository.save(personForUpdating);
 
