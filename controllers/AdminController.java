@@ -67,14 +67,13 @@ public class AdminController {
         if (existingPerson == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        
+
         existingPerson.setName(person.getName());
         existingPerson.setUsername(person.getUsername());
         existingPerson.setPassword(person.getPassword());
-        
         existingPerson.setRoles(person.getRoles());
 
-        Person updatedPerson = personService.update(existingPerson, id);
+        Person updatedPerson = personService.update(existingPerson);
 
         return new ResponseEntity<>(updatedPerson, HttpStatus.OK);
     }
