@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    table{
+      border: 1px solid #eee;
+      table-layout: fixed;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+    table th {
+      font-weight: bold;
+      padding: 5px;
+      background: #efefef;
+      border: 1px solid #dddddd;
+    }
+    table td{
+      padding: 5px 10px;
+      border: 1px solid #eee;
+      text-align: left;
+    }
+    table tbody tr:nth-child(odd){
+      background: #fff;
+    }
+    table tbody tr:nth-child(even){
+      background: #F7F7F7;
+    }
+  </style>
+  <title>Пользователь</title>
+</head>
+<body>
+<h1>Пользователь</h1>
+<table class="table">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Имя пользователя</th>
+    <th>Имя</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td th:text="${person.getId()}"></td>
+    <td th:text="${person.getUsername()}"></td>
+    <td th:text="${person.getName()}"></td>
+
+  </tr>
+  </tbody>
+</table>
+<form  th:action="@{/admin/{id} (id=${person.getId()})}">
+  <button type="submit">Редактировать</button>
+</form>
+<form th:method="DELETE" th:action="@{/admin/{id} (id=${person.getId()})}">
+  <button type="submit">Удалить</button>
+</form>
+<form th:action="@{/logout}" th:method="POST">
+  <button type="submit">Выход</button>
+</form>
+
+</body>
+</html>
