@@ -45,7 +45,7 @@ public class AdminController {
     }
 
     @PostMapping("/reg")
-    public ResponseEntity<HttpStatus> performAddition(@RequestBody @Valid Person person, BindingResult bindingResult, @RequestParam("roleName") String roleName) {
+    public ResponseEntity<HttpStatus> performAddition(@RequestBody @Valid Person person, BindingResult bindingResult, @RequestParam("roleNames") List<String> roleNames) {
         personValidator.validate(person, bindingResult);
         if (bindingResult.hasErrors()) {
             StringBuilder errorMsg = new StringBuilder();
@@ -57,18 +57,26 @@ public class AdminController {
         }
         String encodedPassword = passwordEncoder.encode(person.getPassword());
         person.setPassword(encodedPassword);
-        personService.addNewPerson(person, roleName);
+        personService.addNewPerson(person, roleNames);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<Person> updateUser(@PathVariable int id, @RequestBody Person person) {
-        Person updatedUser = personService.update(person, id);
-        if (updatedUser != null) {
-            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-        } else {
+        Person existingPerson = personService.findById(id);
+        if (existingPerson == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        
+        existingPerson.setName(person.getName());
+        existingPerson.setUsername(person.getUsername());
+        existingPerson.setPassword(person.getPassword());
+        
+        existingPerson.setRoles(person.getRoles());
+
+        Person updatedPerson = personService.update(existingPerson, id);
+
+        return new ResponseEntity<>(updatedPerson, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
