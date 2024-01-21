@@ -1,50 +1,51 @@
 package ru.itmentor.spring.boot_security.demo.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.hibernate.annotations.Cascade;
-import org.springframework.security.core.GrantedAuthority;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.Set;
 
 @Entity
-@Table(name="person")
+@Table(name = "person")
 public class Person {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @NotEmpty(message = "Имя не должно быть пустым")
-    @Size(min=2, max=50, message = "Псевдоним не должен быть короче 2 или длиннее 50 символов")
-    @Column(name="username")
+    @Size(min = 2, max = 50, message = "Псевдоним не должен быть короче 2 или длиннее 50 символов")
+    @Column(name = "username")
     private String username;
 
     @NotEmpty(message = "Имя не должно быть пустым")
-    @Size(min=2, max=50, message = "Имя не должно быть короче 2 или длиннее 50 символов")
-    @Column(name="name")
+    @Size(min = 2, max = 50, message = "Имя не должно быть короче 2 или длиннее 50 символов")
+    @Column(name = "name")
     private String name;
 
     @NotEmpty(message = "Поле пароль обязательно к заполнению")
-    @Size(min=5, max=100, message = "Пароль должен быть не короче 5 или длиннее 50 символов, состоять должен из латинских символов разного регистра")
+    @Size(min = 5, max = 200, message = "Пароль должен быть не короче 5 или длиннее 50 символов, состоять должен из латинских символов разного регистра")
     @Column(name = "password")
     private String password;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id")
-    private Role role;
+    @ManyToMany // Я честно сдаюсь, сколько бы не бился с аннотацией @OneToMany не смог, звал на помощь студентов, тоже не поняли, так как большинство использовали @ManyToMany.
+    // Именно с @ManyToMany пользователь может иметь несколько ролей, а с @OneToMany в таблице всегда выдает ошибку будто я создаю новую роль или что
+    @JoinTable(name = "person_roles",
+            joinColumns = @JoinColumn(name = "person_id"),
+            inverseJoinColumns = @JoinColumn(name = "roles_id"))
+    @JsonIgnore
+    private Set<Role> roles;
 
     public Person() {
     }
 
-    public Role getRole() {
-        return role;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     public Person(String username, String name) {
@@ -52,11 +53,11 @@ public class Person {
         this.name = name;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -86,6 +87,6 @@ public class Person {
 
     @Override
     public String toString() {
-        return String.format("Person{%s\n%s\n%s\n%s\n", this.id, this.username, this.name, this.password);
+        return String.format("Person{%s\n%s\n%s\n%s}\n", this.id, this.username, this.name, this.password);
     }
 }
