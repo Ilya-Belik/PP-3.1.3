@@ -88,8 +88,8 @@ public class PersonServiceImpl implements PersonService {
 
     @Transactional
     @Override
-    public Person update(Person updatedPerson, int id) {
-        Person personForUpdating = personRepository.findById(id)
+    public Person update(Person updatedPerson) {
+        Person personForUpdating = personRepository.findById(updatedPerson.getId())
                 .orElseThrow(() -> new PersonNotFoundException());
         personForUpdating.setName(updatedPerson.getName());
         personForUpdating.setUsername(updatedPerson.getUsername());
@@ -112,9 +112,10 @@ public class PersonServiceImpl implements PersonService {
         }
 
         personRepository.save(personForUpdating);
-
+// изменения в контроллере
         return personForUpdating;
     }
+
     private PasswordEncoder getPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
