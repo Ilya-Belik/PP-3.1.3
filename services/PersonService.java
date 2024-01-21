@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface PersonService extends UserDetailsService {
     UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
-    void addNewPerson(Person person);
+    void addNewPerson(Person person, List<String> roleNames);
     List<Person> getAll();
     Person findById(int id);
     void delete(int id);
