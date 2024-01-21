@@ -14,6 +14,6 @@ public interface PersonService extends UserDetailsService {
     List<Person> getAll();
     Person findById(int id);
     void delete(int id);
-    Person update(Person updatedPerson, int id);
+    Person update(Person updatedPerson);
     Optional<Person> findByUsername(String username);
 }
