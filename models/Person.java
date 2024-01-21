@@ -29,12 +29,10 @@ public class Person {
     @Column(name = "password")
     private String password;
 
-    @ManyToMany // Я честно сдаюсь, сколько бы не бился с аннотацией @OneToMany не смог, звал на помощь студентов, тоже не поняли, так как большинство использовали @ManyToMany.
-    // Именно с @ManyToMany пользователь может иметь несколько ролей, а с @OneToMany в таблице всегда выдает ошибку будто я создаю новую роль или что
+    @ManyToMany
     @JoinTable(name = "person_roles",
             joinColumns = @JoinColumn(name = "person_id"),
             inverseJoinColumns = @JoinColumn(name = "roles_id"))
-    @JsonIgnore
     private Set<Role> roles;
 
     public Person() {
